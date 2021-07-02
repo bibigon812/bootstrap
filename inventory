@@ -1,0 +1,4 @@
+laptop ansible_connection=local
+
+[pop_os]
+laptop

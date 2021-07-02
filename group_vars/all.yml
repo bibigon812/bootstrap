@@ -1,0 +1,9 @@
+docker_install_compose: false
+docker_users:
+  - dyakovlev
+pip_install_packages:
+  - molecule
+  - molecule-vagrant
+  - python-vagrant
+  - flake8
+  - docker-compose
