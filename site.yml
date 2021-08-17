@@ -3,3 +3,43 @@
     - role: geerlingguy.pip
     - role: geerlingguy.docker
       become: true
+  tasks:
+    - name: run prometheus node exported http://localhost:9100
+      community.docker.docker_container:
+        name: node_exporter
+        image: prom/node-exporter
+        pull: true
+        restart_policy: always
+        ipc_mode: host
+        pid_mode: host
+        network_mode: host
+      tags:
+        - prometheus
+
+    - name: create prometheus config file
+      copy:
+        dest: "{{ ansible_env.HOME }}/.prometheus.yml"
+        src: prometheus.yml
+      tags: prometheus
+
+    - name: run prometheus server http://localhost:9090
+      community.docker.docker_container:
+        name: prometheus
+        image: prom/prometheus
+        pull: true
+        restart_policy: always
+        network_mode: host
+        volumes:
+          - "{{ ansible_env.HOME }}/.prometheus.yml:/etc/prometheus/prometheus.yml:ro"
+      tags:
+        - prometheus
+
+    - name: run grafana server http://localhost:3000
+      community.docker.docker_container:
+        name: grafana
+        image: grafana/grafana
+        pull: true
+        restart_policy: always
+        network_mode: host
+      tags:
+        - prometheus
